@@ -4,6 +4,7 @@
 
 #ifndef AOC_2020_MAIN_HPP
 #define AOC_2020_MAIN_HPP
+#include <charconv>
 #include <vector>
 
 #include <chrono>
@@ -63,8 +64,7 @@ private:
     return 0;                                                                  \
   }
 
-template<typename V>
-auto to_vector(V &&v) {
+template <typename V> auto to_vector(V &&v) {
   decltype(auto) cv = std::forward<V>(v) | vw::common;
   return std::vector(cv.begin(), cv.end());
 }
@@ -73,16 +73,14 @@ struct as_vector_impl {};
 
 inline auto as_vector = as_vector_impl{};
 
-template<typename V>
-inline auto operator|(V &&v, const as_vector_impl &obj) {
+template <typename V> inline auto operator|(V &&v, const as_vector_impl &obj) {
   return to_vector(std::forward<V>(v));
 }
 
-template<typename T>
-struct srange_to_value {
+template <typename T> struct srange_to_value {
   static auto operator()(auto &&r) {
     T init{};
-    for (auto e: r) {
+    for (auto e : r) {
       init = init * 10 + e - '0';
     }
     return init;
@@ -98,4 +96,4 @@ template <typename T> auto as_value(std::string_view s) {
   }
 }
 
-#endif//AOC_2020_MAIN_HPP
+#endif // AOC_2020_MAIN_HPP
