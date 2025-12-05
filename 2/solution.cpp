@@ -76,7 +76,7 @@ class AOCDaySolution
 
   bool complex_check(uint64_t value) {
     const auto casted = std::to_string(value);
-    for (auto substr_size = 1; substr_size <= casted.size() / 2;
+    for (auto substr_size = 1UL; substr_size <= casted.size() / 2;
          ++substr_size) {
       if (casted.size() % substr_size != 0) {
         continue;
