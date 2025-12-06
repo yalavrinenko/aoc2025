@@ -92,7 +92,7 @@ template <typename T> auto as_value(std::string_view s) {
   if (std::from_chars(s.begin(), s.end(), value).ec == std::errc{}) {
     return value;
   } else {
-    throw std::runtime_error{"Fail to parse int."};
+    throw std::runtime_error{fmt::format("Fail to parse value to int: {}", s)};
   }
 }
 
