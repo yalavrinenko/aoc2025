@@ -14,6 +14,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 struct AOC_Output {
@@ -82,11 +83,38 @@ class AOCDaySolution
     return 0;
   }
 
+  uint64_t path_counter_memo_impl(
+      const std::string &src, const std::string &dst,
+      std::map<std::string, std::vector<std::string>> const &adj,
+      std::unordered_map<std::string, uint64_t> &memo) {
+    if (memo.contains(src))
+      return memo[src];
+    if (src == dst)
+      return memo[src] = 1;
+
+    uint64_t total = 0;
+    if (adj.contains(src)) {
+      for (const auto &n : adj.at(src)) {
+        total += path_counter_memo_impl(n, dst, adj, memo);
+      }
+    }
+
+    memo[src] = total;
+    return total;
+  }
+
+  uint64_t path_counter_memo(
+      const std::string &src, const std::string &dst,
+      std::map<std::string, std::vector<std::string>> const &adj) {
+    std::unordered_map<std::string, uint64_t> memo;
+    return path_counter_memo_impl(src, dst, adj, memo);
+  }
+
   AOC_Output part1(std::vector<AOC_Input> const &v) {
     uint64_t pathes = 0;
 
     try {
-      pathes = path_counter_v2("you", "out", v.front().adj);
+      pathes = path_counter_memo("you", "out", v.front().adj);
     } catch (...) {
     }
 
@@ -94,11 +122,9 @@ class AOCDaySolution
   }
 
   AOC_Output part2(std::vector<AOC_Input> const &v) {
-    auto srv_to_fft = path_counter_v2("svr", "fft", v.front().adj);
-    auto fft_to_dac = path_counter_v2("fft", "dac", v.front().adj);
-    auto dac_to_out = path_counter_v2("dac", "out", v.front().adj);
-
-    fmt::print("{} {} {}\n", srv_to_fft, fft_to_dac, dac_to_out);
+    auto srv_to_fft = path_counter_memo("svr", "fft", v.front().adj);
+    auto fft_to_dac = path_counter_memo("fft", "dac", v.front().adj);
+    auto dac_to_out = path_counter_memo("dac", "out", v.front().adj);
 
     return AOC_Output{srv_to_fft * fft_to_dac * dac_to_out};
   }
